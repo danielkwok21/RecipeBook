@@ -1,4 +1,4 @@
-package com.example.danie.recipebook;
+package com.example.danie.recipebook.Activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerViewAccessibilityDelegate;
 
 import com.example.danie.recipebook.Adapters.RecipeRecyclerAdapter;
+import com.example.danie.recipebook.R;
 
 import java.util.Arrays;
 import java.util.List;
