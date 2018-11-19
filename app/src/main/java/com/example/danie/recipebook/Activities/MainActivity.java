@@ -5,23 +5,20 @@ import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.danie.recipebook.Adapters.RecipeRecyclerAdapter;
 import com.example.danie.recipebook.ContentProvider.RecipeProvider;
 import com.example.danie.recipebook.R;
 import com.example.danie.recipebook.Recipe;
 
-import java.security.spec.ECField;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     RecipeRecyclerAdapter recipeRecyclerAdapter;
     ContentResolver contentResolver;
 
+    EditText searchBox;
+    Button search;
     Button createNewRecipe;
     List<Recipe> recipes = new ArrayList<>();
 
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if(onDbChange()){
-            getRecipeListFromCP();
+            getRecipesFromCP();
         }
 
         initRecyclerView();
@@ -62,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void getRecipeListFromCP(){
-        Log.d(TAG, "getRecipeListFromCP: ");
+    private void getRecipesFromCP(){
+        Log.d(TAG, "getRecipesFromCP: ");
         Recipe recipe;
 
         String URL = RecipeProvider.URL;
@@ -79,16 +78,37 @@ public class MainActivity extends AppCompatActivity {
                 recipes.add(recipe);
             }while(c.moveToNext());
         }else{
-            Log.d(TAG, "getRecipeListFromCP: No recipes");
+            Log.d(TAG, "getRecipesFromCP: No recipes");
         }
     }
 
+    private List<Recipe> searchRecipes(String searchString){
+        List<Recipe> queryRecipes = new ArrayList<>();
+
+        for(Recipe r: recipes){
+            String name = r.getName().toLowerCase();
+            searchString = searchString.toLowerCase();
+
+            if(name.equals(searchString)){
+                queryRecipes.add(r);
+            }
+        }
+        return queryRecipes;
+    }
+
     private void initComponents(){
-        createNewRecipe = (Button)findViewById(R.id.main_create_recipe_btn);
+        createNewRecipe = findViewById(R.id.main_create_recipe_btn);
+        searchBox = findViewById(R.id.main_search_et);
+        search = findViewById(R.id.main_search_btn);
 
         createNewRecipe.setOnClickListener((v)->{
             Intent i = new Intent(this, CreateRecipe.class);
             startActivity(i);
+        });
+
+        search.setOnClickListener((v)->{
+            recipes = searchRecipes(searchBox.getText().toString());
+            initRecyclerView();
         });
     }
 

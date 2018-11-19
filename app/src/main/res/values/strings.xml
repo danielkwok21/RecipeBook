@@ -3,4 +3,5 @@
     <string name="create_new_recipe_label">Create new recipe</string>
     <string name="recipe_name_hint">Recipe name</string>
     <string name="recipe_instruction_hint">Instructions</string>
+    <string name="search_hint">Search</string>
 </resources>
