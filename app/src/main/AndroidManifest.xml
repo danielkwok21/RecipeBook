@@ -16,12 +16,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.CreateRecipe"></activity>
+        <activity android:name=".Activities.CreateRecipe" />
 
         <provider
             android:name=".ContentProvider.RecipeProvider"
-            android:authorities="com.example.danie.recipebook.ContentProvider.RecipeProvider">
-        </provider>
+            android:authorities="com.example.danie.recipebook.ContentProvider.RecipeProvider"></provider>
+
+        <activity android:name=".Activities.ViewRecipe"></activity>
     </application>
 
 </manifest>
