@@ -1,6 +1,8 @@
 package com.example.danie.recipebook;
 
-public class Recipe {
+import java.io.Serializable;
+
+public class Recipe implements Serializable {
     String name;
     String instructions;
 

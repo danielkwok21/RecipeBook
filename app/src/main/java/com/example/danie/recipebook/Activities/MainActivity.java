@@ -1,8 +1,11 @@
 package com.example.danie.recipebook.Activities;
 
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +18,7 @@ import com.example.danie.recipebook.ContentProvider.RecipeProvider;
 import com.example.danie.recipebook.R;
 import com.example.danie.recipebook.Recipe;
 
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,29 +31,40 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     RecipeRecyclerAdapter recipeRecyclerAdapter;
+    ContentResolver contentResolver;
 
     Button createNewRecipe;
-
-    List<Recipe> recipes = Collections.emptyList();
+    List<Recipe> recipes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recipes = getRecipeListFromCP();
+        if(onDbChange()){
+            getRecipeListFromCP();
+        }
+
         initRecyclerView();
         initComponents();
-
-//        for(Recipe r: recipes){
-//            Log.d(TAG, "name: "+r.getName());
-//            Log.d(TAG, "instruction: "+r.getInstructions());
-//        }
     }
 
-    private List<Recipe> getRecipeListFromCP(){
+    private boolean onDbChange(){
+        contentResolver = getApplicationContext().getContentResolver();
+
+        contentResolver.registerContentObserver(RecipeProvider.CONTENT_URI, true, new ContentObserver(null) {
+            @Override
+            public void onChange(boolean selfChange) {
+                super.onChange(selfChange);
+                Log.d(TAG, "onChange: DB changed");
+            }
+        });
+        return true;
+    }
+
+    private void getRecipeListFromCP(){
+        Log.d(TAG, "getRecipeListFromCP: ");
         Recipe recipe;
-        List<Recipe> recipes = new ArrayList<>();
 
         String URL = RecipeProvider.URL;
         Uri uri = Uri.parse(URL);
@@ -66,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             Log.d(TAG, "getRecipeListFromCP: No recipes");
         }
-
-        return recipes;
     }
 
     private void initComponents(){

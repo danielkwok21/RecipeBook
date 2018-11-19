@@ -2,7 +2,6 @@ package com.example.danie.recipebook.Activities;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -14,7 +13,7 @@ import com.example.danie.recipebook.Util;
 
 public class CreateRecipe extends AppCompatActivity {
 
-    EditText recipe_name;
+    EditText recipeName;
     EditText instructions;
     Button create;
 
@@ -27,7 +26,7 @@ public class CreateRecipe extends AppCompatActivity {
     }
 
     private void initComponents(){
-        recipe_name = findViewById(R.id.create_recipe_name_et);
+        recipeName = findViewById(R.id.create_recipe_name_et);
         instructions = findViewById(R.id.create_recipe_instructions_et);
         create = findViewById(R.id.create_recipe_create_btn);
 
@@ -43,7 +42,7 @@ public class CreateRecipe extends AppCompatActivity {
         ContentValues values = new ContentValues();
 
         try{
-            String name = recipe_name.getText().toString();
+            String name = recipeName.getText().toString();
             String instruction = instructions.getText().toString();
 
             if(!name.isEmpty()){
