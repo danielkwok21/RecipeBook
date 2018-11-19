@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
@@ -17,27 +18,32 @@ import java.util.HashMap;
 
 public class RecipeProvider extends ContentProvider {
 
-    private static final String PROVIDER_NAME = "com.example.danie.recipebook.ContentProvider.RecipeProvider";
-    private static final String PATH = "rprecipes";
-    private static final String URL = "content://"+PROVIDER_NAME+"/"+PATH;
-    private static final Uri CONTENT_URL = Uri.parse(URL);
-    private static final String ANDROID_CURSOR_DIR = "vnd.android.cursor.dir";
+    /**
+     * these public final variables are for other classes/activities when intend to access this content provider
+     */
+    //config
+    public static final String PROVIDER_NAME = "com.example.danie.recipebook.ContentProvider.RecipeProvider";
+    public static final String PATH = "recipes";
+    public static final String URL = "content://"+PROVIDER_NAME+"/"+PATH;
+    public static final Uri CONTENT_URI = Uri.parse(URL);
+    public static final String ANDROID_CURSOR_DIR = "vnd.android.cursor.dir";
 
     //fields
-    private static final String id = "id";
-    private static final String name = "name";
-    private static final String instructions = "instructions";
+    public static final String ID = "id";
+    public static final String NAME = "name";
+    public static final String INSTRUCTIONS = "instructions";
 
     private static final int uriCode = 1;
     private static HashMap<String, String> values;
+
     private static final UriMatcher uriMatcher;
     static{
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, "PATH", uriCode);
+        uriMatcher.addURI(PROVIDER_NAME, "recipes", uriCode);
     }
 
     //db
-    private SQLiteDatabase recipeDB;
+    private SQLiteDatabase db;
     private static final String DB_NAME = "recipesDB";
     private static final String TABLE_NAME = "recipeTable";
     private static final int DB_VERSION = 1;
@@ -45,9 +51,9 @@ public class RecipeProvider extends ContentProvider {
     //sql
     private static final String CREATE_TABLE =
             "CREATE TABLE "+ TABLE_NAME + "(" +
-                id+ " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                name+ " TEXT NOT NULL, " +
-                instructions + " TEXT" +
+                    ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    NAME + " TEXT NOT NULL, " +
+                    INSTRUCTIONS + " TEXT" +
             ");";
 
     private static final String DROP_TABLE =
@@ -56,9 +62,10 @@ public class RecipeProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        recipeDB = dbHelper.getWritableDatabase();
+        db = dbHelper.getWritableDatabase();
 
-        if(recipeDB!=null){
+        //if db doesn't exists already, create one
+        if(db !=null){
             return true;
         }
         return false;
@@ -71,18 +78,23 @@ public class RecipeProvider extends ContentProvider {
      * */
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
-        sqLiteQueryBuilder.setTables(TABLE_NAME);
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(TABLE_NAME);
 
         switch(uriMatcher.match(uri)){
             case uriCode:
-                sqLiteQueryBuilder.setProjectionMap(values);    //all fields intended to retrieve
+                qb.setProjectionMap(values);    //all fields intended to retrieve
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: "+uri);
         }
 
-        Cursor cursor = sqLiteQueryBuilder.query(recipeDB, projection, selection, selectionArgs, null, null, sortOrder);
+        //default sortOrder is by NAME if none specified
+        if(sortOrder.isEmpty()){
+            sortOrder = NAME;
+        }
+
+        Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);  //set onchange listener
 
         return cursor;
@@ -98,22 +110,23 @@ public class RecipeProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unsupported URI: "+uri);
         }
     }
-
     
     @Override
     public Uri insert(Uri uri,  ContentValues values) {
-        long rowID = recipeDB.insert(TABLE_NAME, null, values);
+        long rowID = db.insert(TABLE_NAME, null, values);
 
+
+        //if new record inserted successfully
         if(rowID>0){
-            //new record inserted
-            Uri _uri = ContentUris.withAppendedId(CONTENT_URL, rowID);
+            Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
             getContext().getContentResolver().notifyChange(_uri, null);
 
             return _uri;
         }else{
             Util.Toast(getContext(), "Row insertion failed");
         }
-        return null;
+
+        throw new SQLException("Failed to add a record into " + uri);
     }
 
     @Override
@@ -122,7 +135,7 @@ public class RecipeProvider extends ContentProvider {
 
         switch(uriMatcher.match(uri)){
             case uriCode:
-                rowsDeleted = recipeDB.delete(TABLE_NAME, selection, selectionArgs);
+                rowsDeleted = db.delete(TABLE_NAME, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: "+uri);
@@ -138,7 +151,7 @@ public class RecipeProvider extends ContentProvider {
 
         switch(uriMatcher.match(uri)){
             case uriCode:
-                rowsUpdated = recipeDB.update(TABLE_NAME, values, selection, selectionArgs);
+                rowsUpdated = db.update(TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI: "+uri);
@@ -150,7 +163,7 @@ public class RecipeProvider extends ContentProvider {
 
     private static class DatabaseHelper extends SQLiteOpenHelper{
 
-        public DatabaseHelper(Context context) {
+        DatabaseHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
         }
 

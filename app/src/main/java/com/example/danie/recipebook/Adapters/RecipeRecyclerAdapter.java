@@ -9,14 +9,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.danie.recipebook.R;
+import com.example.danie.recipebook.Recipe;
 
 import java.util.List;
 
 public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeRecyclerAdapter.RecipeViewHolder>{
-    private List<Integer> id;
+    private List<Recipe> recipes;
 
-    public RecipeRecyclerAdapter(List<Integer> id){
-        this.id = id;
+    public RecipeRecyclerAdapter(List<Recipe> recipes){
+        this.recipes = recipes;
     }
 
     @NonNull
@@ -26,29 +27,31 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecipeRecyclerAd
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         //inflate layout
-        TextView textView = (TextView)layoutInflater.inflate(R.layout.recipe_name_layout, viewGroup, false);
-        RecipeViewHolder recipeViewHolder = new RecipeViewHolder(textView);
+        View view = layoutInflater.inflate(R.layout.recycler_view_layout, viewGroup, false);
+        TextView textView = view.findViewById(R.id.recycler_view_recipe_name);
+
+        RecipeViewHolder recipeViewHolder = new RecipeViewHolder(view);
 
         return recipeViewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder recipeViewHolder, int i) {
-        recipeViewHolder.tv.setText(id.get(i).toString());
+        recipeViewHolder.tv.setText(recipes.get(i).getName());
     }
 
     @Override
     public int getItemCount() {
-        return id.size();
+        return recipes.size();
     }
 
     public static class RecipeViewHolder extends RecyclerView.ViewHolder{
 
         TextView tv;
 
-        public RecipeViewHolder(@NonNull TextView tv) {
-            super(tv);
-            this.tv = tv;
+        public RecipeViewHolder(@NonNull View v) {
+            super(v);
+            tv = v.findViewById(R.id.recycler_view_recipe_name);
         }
     }
 }

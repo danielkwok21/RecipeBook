@@ -20,9 +20,7 @@
 
         <provider
             android:name=".ContentProvider.RecipeProvider"
-            android:authorities="com.example.danie.recipebook.ContentProvider.RecipeProvider"
-            android:exported="true"
-            android:multiprocess="true">
+            android:authorities="com.example.danie.recipebook.ContentProvider.RecipeProvider">
         </provider>
     </application>
 
