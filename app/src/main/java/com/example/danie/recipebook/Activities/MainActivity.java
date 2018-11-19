@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    List<Integer> id;
     RecipeRecyclerAdapter recipeRecyclerAdapter;
 
     Button createNewRecipe;

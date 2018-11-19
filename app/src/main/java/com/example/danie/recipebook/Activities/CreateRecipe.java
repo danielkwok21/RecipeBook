@@ -43,15 +43,27 @@ public class CreateRecipe extends AppCompatActivity {
         ContentValues values = new ContentValues();
 
         try{
-            values.put(RecipeProvider.NAME, recipe_name.getText().toString());
-            values.put(RecipeProvider.INSTRUCTIONS, instructions.getText().toString());
+            String name = recipe_name.getText().toString();
+            String instruction = instructions.getText().toString();
+
+            if(!name.isEmpty()){
+                values.put(RecipeProvider.NAME, name);
+            }else{
+                throw new Exception();
+            }
+
+            if(!instruction.isEmpty()){
+                values.put(RecipeProvider.INSTRUCTIONS, instruction);
+            }else{
+                throw new Exception();
+            }
 
             getContentResolver().insert(RecipeProvider.CONTENT_URI, values);
             Util.Toast(getBaseContext(), "Recipe created!");
 
             return true;
         }catch(Exception e){
-            Util.Toast(getBaseContext(), "Unable to create recipe!");
+            Util.Toast(getBaseContext(), "Unable to create recipe!Fields cannot be empty");
             return false;
         }
     }
