@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -12,6 +13,7 @@ import com.example.danie.recipebook.R;
 import com.example.danie.recipebook.Util;
 
 public class CreateRecipe extends AppCompatActivity {
+    private static final String TAG = "CreateRecipe";
 
     EditText recipeName;
     EditText instructions;
@@ -65,5 +67,42 @@ public class CreateRecipe extends AppCompatActivity {
             Util.Toast(getBaseContext(), "Unable to create recipe!Fields cannot be empty");
             return false;
         }
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: CreateRecipe");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: CreateRecipe");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: CreateRecipe");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: CreateRecipe");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: CreateRecipe");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: CreateRecipe");
     }
 }
