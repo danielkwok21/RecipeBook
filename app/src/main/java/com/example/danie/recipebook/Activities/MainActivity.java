@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     EditText searchBox;
     Button search;
     Button createNewRecipe;
+
     List<Recipe> recipes = new ArrayList<>();
 
     @Override
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             getRecipesFromCP();
         }
 
-        initRecyclerView();
+        initRecyclerView(recipes);
         initComponents();
     }
 
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //sets global var recipes
     private void getRecipesFromCP(){
         Log.d(TAG, "getRecipesFromCP: ");
         Recipe recipe;
@@ -81,22 +83,28 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "getRecipesFromCP: No recipes");
         }
     }
-
-    private List<Recipe> searchRecipes(String searchString){
+    /*
+    * search recipe list via string provided
+    * */
+    private List<Recipe> searchRecipe(String searchString){
+        Log.d(TAG, "searchRecipe: ");
         List<Recipe> queryRecipes = new ArrayList<>();
 
         for(Recipe r: recipes){
             String name = r.getName().toLowerCase();
             searchString = searchString.toLowerCase();
 
-            if(name.equals(searchString)){
+            if(name.contains(searchString)){
+                Log.d(TAG, "searchRecipe: R: "+r);
                 queryRecipes.add(r);
             }
         }
+
         return queryRecipes;
     }
 
     private void initComponents(){
+
         createNewRecipe = findViewById(R.id.main_create_recipe_btn);
         searchBox = findViewById(R.id.main_search_et);
         search = findViewById(R.id.main_search_btn);
@@ -107,12 +115,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         search.setOnClickListener((v)->{
-            recipes = searchRecipes(searchBox.getText().toString());
-            initRecyclerView();
+            List<Recipe> searched_recipes;
+
+            //if search for string in recipe list if string provided
+            //if search box empty, returns the full list
+            if(!searchBox.getText().toString().isEmpty()){
+                searched_recipes = searchRecipe(searchBox.getText().toString());
+                initRecyclerView(searched_recipes);
+            }else{
+                initRecyclerView(recipes);
+            }
         });
     }
 
-    private void initRecyclerView(){
+    private void initRecyclerView(List<Recipe> recipes){
         recyclerView = findViewById(R.id.main_recipes_rv);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
