@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import com.example.danie.recipebook.Adapters.RecipeRecyclerAdapter;
 import com.example.danie.recipebook.ContentProvider.RecipeProvider;
+import com.example.danie.recipebook.Contract;
 import com.example.danie.recipebook.R;
 import com.example.danie.recipebook.Recipe;
 
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean onDbChange(){
         contentResolver = getApplicationContext().getContentResolver();
 
-        contentResolver.registerContentObserver(RecipeProvider.CONTENT_URI, true, new ContentObserver(null) {
+        contentResolver.registerContentObserver(Contract.CONTENT_URI, true, new ContentObserver(null) {
             @Override
             public void onChange(boolean selfChange) {
                 super.onChange(selfChange);
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "getRecipesFromCP: ");
         Recipe recipe;
 
-        String URL = RecipeProvider.URL;
+        String URL = Contract.URL;
         Uri uri = Uri.parse(URL);
         Cursor c = managedQuery(uri, null, null, null, RecipeProvider.NAME);
 

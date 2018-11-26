@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.danie.recipebook.ContentProvider.RecipeProvider;
+import com.example.danie.recipebook.Contract;
 import com.example.danie.recipebook.R;
 import com.example.danie.recipebook.Util;
 
@@ -59,7 +60,7 @@ public class CreateRecipe extends AppCompatActivity {
                 throw new Exception();
             }
 
-            getContentResolver().insert(RecipeProvider.CONTENT_URI, values);
+            getContentResolver().insert(Contract.CONTENT_URI, values);
             Util.Toast(getBaseContext(), "Recipe created!");
 
             return true;

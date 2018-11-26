@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.danie.recipebook.Adapters.RecipeRecyclerAdapter;
 import com.example.danie.recipebook.ContentProvider.RecipeProvider;
+import com.example.danie.recipebook.Contract;
 import com.example.danie.recipebook.R;
 import com.example.danie.recipebook.Recipe;
 import com.example.danie.recipebook.Util;
@@ -54,7 +55,7 @@ public class ViewRecipe extends AppCompatActivity {
         String[] args = {thisRecipe.getName()};
 
         try{
-            getContentResolver().delete(RecipeProvider.CONTENT_URI, "name=?", args);
+            getContentResolver().delete(Contract.CONTENT_URI, "name=?", args);
             Util.Toast(getBaseContext(), "Recipe deleted!");
 
             return true;

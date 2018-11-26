@@ -12,21 +12,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
+import com.example.danie.recipebook.Contract;
 import com.example.danie.recipebook.Util;
 
 import java.util.HashMap;
 
 public class RecipeProvider extends ContentProvider {
 
-    /**
-     * these public final variables are for other classes/activities when intend to access this content provider
-     */
-    //config
-    public static final String PROVIDER_NAME = "com.example.danie.recipebook.ContentProvider.RecipeProvider";
-    public static final String PATH = "recipes";
-    public static final String URL = "content://"+PROVIDER_NAME+"/"+PATH;
-    public static final Uri CONTENT_URI = Uri.parse(URL);
-    public static final String ANDROID_CURSOR_DIR = "vnd.android.cursor.dir";
+
 
     //fields
     public static final String ID = "id";
@@ -39,7 +32,7 @@ public class RecipeProvider extends ContentProvider {
     private static final UriMatcher uriMatcher;
     static{
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, "recipes", uriCode);
+        uriMatcher.addURI(Contract.PROVIDER_NAME, "recipes", uriCode);
     }
 
     //db
@@ -105,7 +98,7 @@ public class RecipeProvider extends ContentProvider {
 
         switch(uriMatcher.match(uri)){
             case uriCode:
-                return ANDROID_CURSOR_DIR+"/"+PATH;
+                return Contract.ANDROID_CURSOR_DIR+"/"+Contract.PATH;
             default:
                 throw new IllegalArgumentException("Unsupported URI: "+uri);
         }
@@ -118,7 +111,7 @@ public class RecipeProvider extends ContentProvider {
 
         //if new record inserted successfully
         if(rowID>0){
-            Uri _uri = ContentUris.withAppendedId(CONTENT_URI, rowID);
+            Uri _uri = ContentUris.withAppendedId(Contract.CONTENT_URI, rowID);
             getContext().getContentResolver().notifyChange(_uri, null);
 
             return _uri;
